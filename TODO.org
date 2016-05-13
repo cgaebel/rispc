@@ -9,7 +9,21 @@
   [ ] Walkthrough the demo code
   [ ] How to view warnings and performance warnings (sucks!)
   [ ] include pretty picture!
+  [ ] environment variable overrides
+  [ ] compile time requirements
+  [ ] talk about multi-targeting
 
-* CI
+* Testing
   [ ] travis-ci script for linux tests (see: iobuf)
   [ ] appveyor for windows tests (see: gcc-rs)
+  [ ] test weird configs to make sure they work. Maybe need ispc-test binary?
+  [ ] test alternate math libraries
+  [ ] test tasking
+
+* Targets
+  [ ] ispc technically supports NEON (only in HEAD?). look into it.
+  [ ] Add support for xeon phi. Hard to test.
+
+* Tasking
+  [ ] Port or copy in the c++ based tasking library from ispc/examples. Maybe
+      use rust's task abstraction? Does rust even _have_ a task abstraction?
