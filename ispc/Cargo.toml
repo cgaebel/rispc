@@ -1,0 +1,14 @@
+[package]
+name = "ispc"
+version = "0.1.0"
+authors = ["Clark Gaebel <cg.wowus.cg@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/cgaebel/ispc-rs"
+description = """
+A build-time dependency for cargo build scripts to assist in invoking Intel's
+ISPC compiler to compile a static archive to be linked into rust code.
+"""
+keywords = ["build-dependencies", "ispc", "spmd", "intel"]
+
+[dependencies]
+gcc = "0.3"

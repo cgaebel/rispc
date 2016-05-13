@@ -1,0 +1,11 @@
+[package]
+name = "ispc-demo"
+version = "0.1.0"
+authors = ["Clark Gaebel <cg.wowus.cg@gmail.com>"]
+build = "build.rs"
+
+[build-dependencies.ispc]
+path = "../ispc"
+
+[dependencies]
+time = "0.1"

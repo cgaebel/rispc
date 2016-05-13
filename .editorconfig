@@ -1,0 +1,6 @@
+[*.{ispc,rs}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+tab_width = 4
+trim_tailing_whitespace = true
