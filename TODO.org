@@ -1,0 +1,15 @@
+* Documentation
+  [ ] #![deny(missing_docs)] the ispc library
+  [ ] be sure to comment default values
+
+* README
+  [ ] Upload docs to github
+  [ ] Steal layout of iobuf library
+  [ ] link to ispc homepage
+  [ ] Walkthrough the demo code
+  [ ] How to view warnings and performance warnings (sucks!)
+  [ ] include pretty picture!
+
+* CI
+  [ ] travis-ci script for linux tests (see: iobuf)
+  [ ] appveyor for windows tests (see: gcc-rs)

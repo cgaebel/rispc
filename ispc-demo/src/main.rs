@@ -64,8 +64,6 @@ fn write_ppm(buf: &[u32], w: u32, h: u32, file: &str) -> Result<(), std::io::Err
     }
   }
 
-  println!("Wrote image file {}", file);
-
   Ok(())
 }
 
@@ -84,27 +82,29 @@ fn main() {
 
   let bp: *mut u32 = buf.as_mut_ptr();
 
-  let mut min_t = 1_000_000_000_000;
+  let mut min_ispc = 1_000_000_000_000;
 
   for _ in 0..3 {
     let t0 = t_ns();
     unsafe { mandelbrot_ispc(x0, y0, x1, y1, w, h, max_iters, bp) };
     let dt = t_ns() - t0;
-    min_t = cmp::min(min_t, dt);
+    min_ispc = cmp::min(min_ispc, dt);
   }
 
-  println!("[mandelbrot ispc]:\t\t[{:.3}] million cycles", min_t as f64 / 1000.0f64);
+  println!("[mandelbrot ispc]:\t\t[{:.3}] million cycles", min_ispc as f64 / 1000.0f64);
   write_ppm(&*buf, w, h, "mandelbrot-ispc.ppm").unwrap();
 
-  let mut min_t = 1_000_000_000_000;
+  let mut min_serial = 1_000_000_000_000;
 
   for _ in 0..3 {
     let t0 = t_ns();
     mandelbrot_serial(x0, y0, x1, y1, w, h, max_iters, bp);
     let dt = t_ns() - t0;
-    min_t = cmp::min(min_t, dt);
+    min_serial = cmp::min(min_serial, dt);
   }
 
-  println!("[mandelbrot serial]:\t\t[{:.3}] million cycles", min_t as f64 / 1000.0f64);
+  println!("[mandelbrot serial]:\t\t[{:.3}] million cycles", min_serial as f64 / 1000.0f64);
   write_ppm(&*buf, w, h, "mandelbrot-serial.ppm").unwrap();
+
+  println!("\t\t\t\t({:.2}x speedup from ISPC)", (min_serial as f64) / (min_ispc as f64));
 }

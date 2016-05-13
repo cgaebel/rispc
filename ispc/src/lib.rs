@@ -515,9 +515,20 @@ fn run(cmd: &mut Command) {
   let status = output.status;
   println!("{:?}", status);
   let stdout = String::from_utf8_lossy(&output.stdout);
-  println!("\n--- stdout ---");
-  println!("{}", stdout);
-  println!("--- end stdout ---\n");
+
+  if !stdout.is_empty() {
+    println!("\n--- stdout ---");
+    println!("{}", stdout);
+    println!("--- end stdout ---\n");
+  }
+
+  let stderr = String::from_utf8_lossy(&output.stderr);
+
+  if !stderr.is_empty() {
+    println!("\n--- stderr ---");
+    println!("{}", stderr);
+    println!("--- end stderr ---\n");
+  }
 
   if !status.success() {
     fail(&format!("command did not execute successfully, got: {}", status));

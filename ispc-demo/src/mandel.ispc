@@ -28,7 +28,6 @@ export void mandelbrot_ispc(
       float x = x0 + i * dx;
       float y = y0 + j * dy;
       int index = j * width + i;
-      output[i % (j+1)] *= 2;
       output[index] = mandel(x, y, maxIterations);
     }
   }
