@@ -1,29 +1,41 @@
+* Prereq
+** DONE Figure out rust+emacs
+        https://www.reddit.com/r/rust/comments/4jbx7m/fancy_rust_development_with_emacs/
+
 * Documentation
-  [ ] #![deny(missing_docs)] the ispc library
-  [ ] be sure to comment default values
+** TODO #![deny(missing_docs)] the ispc library
+** TODO be sure to comment default values
 
 * README
-  [ ] Upload docs to github
-  [ ] Steal layout of iobuf library
-  [ ] link to ispc homepage
-  [ ] Walkthrough the demo code
-  [ ] How to view warnings and performance warnings (sucks!)
-  [ ] include pretty picture!
-  [ ] environment variable overrides
-  [ ] compile time requirements
-  [ ] talk about multi-targeting
+** TODO Upload docs to github
+** TODO Steal layout of iobuf library
+** TODO link to ispc homepage
+** TODO Walkthrough the demo code
+** TODO How to view warnings and performance warnings (sucks!)
+** TODO include pretty picture!
+** TODO environment variable overrides
+** TODO compile time requirements
+** TODO talk about multi-targeting
 
 * Testing
-  [ ] travis-ci script for linux tests (see: iobuf)
-  [ ] appveyor for windows tests (see: gcc-rs)
-  [ ] test weird configs to make sure they work. Maybe need ispc-test binary?
-  [ ] test alternate math libraries
-  [ ] test tasking
+** TODO travis-ci script for linux tests (see: iobuf)
+** TODO appveyor for windows tests (see: gcc-rs)
+** TODO test weird configs to make sure they work. Maybe need ispc-test binary?
+** TODO test alternate math libraries
+** TODO test tasking
 
 * Targets
-  [ ] ispc technically supports NEON (only in HEAD?). look into it.
-  [ ] Add support for xeon phi. Hard to test.
+** TODO ispc technically supports NEON (only in HEAD?). look into it.
+** TODO Add support for xeon phi. Hard to test.
 
 * Tasking
-  [ ] Port or copy in the c++ based tasking library from ispc/examples. Maybe
-      use rust's task abstraction? Does rust even _have_ a task abstraction?
+** TODO Port or copy in the c++ based tasking library from ispc/examples.
+        Pthreads with an oversubscription feature seems fine for this.
+        https://github.com/ispc/ispc/blob/master/examples/tasksys.cpp
+
+* Performance
+** TODO Respect $NUM_JOBS. Does that even make sense? Might have to ask in IRC for
+        this one.
+** TODO Think about adding instrumentation support.
+** TODO Can I detect the debug-assertations flag at build.rs time? If so, use it to
+        detect a sane value for `--opt=disable-assertations`
