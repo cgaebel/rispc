@@ -1,4 +1,61 @@
+//! A library for build scripts to compile [Intel SPMD (ispc)](http://ispc.github.io) code.
+//!
+//! This library is intended to be used as a `build-dependencies` entry in
+//! `Cargo.toml`:
+//!
+//! ```toml
+//! [build-dependencies]
+//! ispc = "0.1"
+//! ```
+//!
+//! If one uses the ispc task system, they must link in the pthread-based
+//! runtime:
+//!
+//! ```toml
+//! [dependencies]
+//! ispcrt = "0.1"
+//! ```
+//!
+//! The purpose of this crate is to provide the utility functions necesasry to
+//! compile ispc code into a static archive which is then linked into a Rust
+//! crate. The top-level `compile_library` function serves as a convenience and
+//! more advanced configuration is available through the `Config` builder.
+//!
+//! This crate will automatically detect situations such as cross compilation
+//! or other environment variables set by Cargo and will build code appropriately.
+//!
+//! # Examples
+//!
+//! Use the default configuration:
+//!
+//! ```no_run
+//! // build.rs
+//! extern crate ispc;
+//!
+//! fn main() {
+//!   ispc::compile_library("libmandelbrot.a", &[ "src/mandelbrot.ispc" ]);
+//! }
+//! ```
+//!
+//! Use more advanced configuration:
+//!
+//! ```no_run
+//! // build.rs
+//! extern crate ispc;
+//!
+//! fn main() {
+//!   ispc::Config::new()
+//!     .file("src/mandelbrot.ispc")
+//!     .define("FOO", Some("bar"))
+//!     .math_lib(ispc::Math::Fast)
+//!     .enable_fast_math(true)
+//!     .addressing(ispc::Addr::A64)
+//!     .pic(false)
+//!     .compile("libmandelbrot.a");
+//! }
+//! ```
 #![allow(non_camel_case_types)]
+#![deny(missing_docs)]
 
 extern crate gcc;
 
@@ -23,12 +80,12 @@ impl Tool {
     }
   }
 
-  pub fn arg(&mut self, s: &str) -> &mut Self {
+  fn arg(&mut self, s: &str) -> &mut Self {
     self.args.push(s.into());
     self
   }
 
-  pub fn to_command(&self) -> Command {
+  fn to_command(&self) -> Command {
     let mut cmd = Command::new(&self.path);
     cmd.args(&self.args);
     for &(ref k, ref v) in self.envs.iter() {
@@ -38,50 +95,84 @@ impl Tool {
   }
 }
 
+/// An addressing scheme. By default, `ispc` uses 32-bit addressing. If your
+/// Arrays grow to more than `2^32` elements, this will need to be changed to
+/// 64-bit.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
-pub enum Addr { A32, A64 }
+pub enum Addr {
+  /// 32-bit addressing
+  A32,
+  /// 64-bit addressing
+  A64
+}
 
+/// The architecture to target. This will generally be autodetected from Cargo's
+/// current target, but may be changed manually to either x86 or x86_64 systems.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
-pub enum Arch { X86, X86_64 }
+pub enum Arch {
+  /// x86
+  X86,
+  /// x86-64
+  X86_64
+}
 
+/// The CPU families one may generate code for. This will generally be
+/// autodetected based on the current set of ISPC targets, but may be manually
+/// overridden.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Cpu {
-  Generic,    //< generic
-  Atom,       //< atom/bonnell
-  Core2,      //< core2
-  Penryn,     //< penryn
-  Corei7,     //< corei7/nehalem
-  Corei7_avx, //< corei7-avx/sandybridge
-  Core_avx_i, //< core-avx-i/ivybridge
-  Core_avx2,  //< core-avx2/haswell
-  Broadwell,  //< broadwell
-  Slm         //< slm/silvermont
+  /// generic
+  Generic,
+  /// atom/bonnell
+  Atom,
+  /// core2
+  Core2,
+  /// penryn
+  Penryn,
+  /// corei7/nehalem
+  Corei7,
+  /// corei7-avx/sandybridge
+  Corei7_avx,
+  /// core-avx-i/ivybridge
+  Core_avx_i,
+  /// core-avx2/haswell
+  Core_avx2,
+  /// broadwell
+  Broadwell,
+  /// slm/silvermont
+  Slm,
 }
 
 impl Cpu {
   fn to_str(self) -> &'static str {
     use Cpu::*;
     match self {
-      Generic => "generic",
-      Atom => "atom",
-      Core2 => "core2",
-      Penryn => "penryn",
-      Corei7 => "corei7",
+      Generic    => "generic",
+      Atom       => "atom",
+      Core2      => "core2",
+      Penryn     => "penryn",
+      Corei7     => "corei7",
       Corei7_avx => "corei7-avx",
       Core_avx_i => "core-avx-i",
-      Core_avx2 => "core-avx2",
-      Broadwell => "broadwell",
-      Slm => "slm",
+      Core_avx2  => "core-avx2",
+      Broadwell  => "broadwell",
+      Slm        => "slm",
     }
   }
 }
 
+/// Selects which math libraries to call out to.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Math {
-  Default, //< Use ispc's built-in math functions
-  Fast,    //< Use high-performance but lower-accuracy math functions
-  Svml,    //< Use the Intel SVML math libraries
-  System,  //< Use the system's math libraries. *WARNING: May be quite slow*.
+  /// Use ispc's built-in math functions
+  Default,
+  /// Use high-performance but lower-accuracy math functions
+  Fast,
+  /// Use the Intel SVML math libraries. You will need to link in this
+  /// dependency yourself.
+  Svml,
+  /// Use the system's math libraries. *WARNING: May be quite slow*.
+  System,
 }
 
 impl Math {
@@ -89,39 +180,63 @@ impl Math {
     use Math::*;
     match self {
       Default => "default",
-      Fast => "fast",
-      Svml => "svml",
-      System => "system",
+      Fast    => "fast",
+      Svml    => "svml",
+      System  => "system",
     }
   }
 }
 
+/// Selects which target ISA(s) and the lane width(s) to generate code for.
+///
+/// Only one width per ISA may be selected.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Target {
+  /// SSE2, auto-detect lane width
   Sse2,
+  /// SSE2, x4 `i32`s processed at once
   Sse2_i32x4,
+  /// SSE2, x8 `i32`s processed at once
   Sse2_i32x8,
 
+  /// SSE4, auto-detect lane width
   Sse4,
+  /// SSE4, x4 `i32`s processed at once
   Sse4_i32x4,
+  /// SSE4, x8 `i32`s processed at once
   Sse4_i32x8,
+  /// SSE4, x8 `i16`s processed at once
   Sse4_i16x8,
+  /// SSE4, x16 `i8`s processed at once
   Sse4_i8x16,
 
+  /// AVX 1.0, auto-detect lane width
   Avx1,
+  /// AVX 1.0, x4 `i32`s processed at once
   Avx1_i32x4,
+  /// AVX 1.0, x8 `i32`s processed at once
   Avx1_i32x8,
+  /// AVX 1.0, x16 `i32`s processed at once
   Avx1_i32x16,
+  /// AVX 1.0, x4 `i64`s processed at once
   Avx1_i64x4,
 
+  /// AVX 1.1, auto-detect lane width
   Avx1_1,
+  /// AVX 1.1, x8 `i32`s processed at once
   Avx1_1_i32x8,
+  /// AVX 1.1, x16 `i32`s processed at once
   Avx1_1_i32x16,
+  /// AVX 1.1, x4 `i64`s processed at once
   Avx1_1_i64x4,
 
+  /// AVX 2.0, auto-detect lane width
   Avx2,
+  /// AVX 2.0, x8 `i32`s processed at once
   Avx2_i32x8,
+  /// AVX 2.0, x16 `i32`s processed at once
   Avx2_i32x16,
+  /// AVX 2.0, x4 `i64`s processed at once
   Avx2_i64x4,
 }
 
@@ -129,28 +244,28 @@ impl Target {
   fn to_str(self) -> &'static str {
     use Target::*;
     match self {
-      Sse2 => "sse2",
+      Sse2       => "sse2",
       Sse2_i32x4 => "sse2-i32x4",
       Sse2_i32x8 => "sse2-i32x8",
 
-      Sse4 => "sse4",
+      Sse4       => "sse4",
       Sse4_i32x4 => "sse4-i32x4",
       Sse4_i32x8 => "sse4-i32x8",
       Sse4_i16x8 => "sse4-i16x8",
       Sse4_i8x16 => "sse4-i8x16",
 
-      Avx1 => "avx1",
+      Avx1        => "avx1",
       Avx1_i32x4  => "avx1-i32x4",
       Avx1_i32x8  => "avx1-i32x8",
       Avx1_i32x16 => "avx1-i32x16",
       Avx1_i64x4  => "avx1-i64x4",
 
-      Avx1_1 => "avx1.1",
+      Avx1_1        => "avx1.1",
       Avx1_1_i32x8  => "avx1.1-i32x8",
       Avx1_1_i32x16 => "avx1.1-i32x16",
       Avx1_1_i64x4  => "avx1.1-i64x4",
 
-      Avx2 => "avx2",
+      Avx2        => "avx2",
       Avx2_i32x8  => "avx2-i32x8",
       Avx2_i32x16 => "avx2-i32x16",
       Avx2_i64x4  => "avx2-i64x4",
@@ -158,6 +273,7 @@ impl Target {
   }
 }
 
+/// Extra configuration to pass to `ispc`.
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Config {
   addressing: Option<Addr>,
@@ -183,6 +299,9 @@ pub struct Config {
 }
 
 impl Config {
+  /// Constructs a new instance of a blank set of configuration.
+  ///
+  /// The builder is finished with the `compile` function.
   pub fn new() -> Config {
     Config {
       addressing: None,
@@ -202,104 +321,191 @@ impl Config {
       force_aligned_memory: false,
       pic: None,
       targets: None,
-      werror: false,
+      werror: true,
       warnings: true,
       wperf: true,
     }
   }
 
+  /// Sets the addressing mode of the compiled ISPC code.
+  ///
+  /// By default, all ISPC-generated code is addressed with `i32`s, so if your
+  /// arrays have more than 2 billion elements, you'll need to change the
+  /// addressing mode to `Addr::X86_64`.
+  ///
+  /// Default value: `Addr::X86`
   pub fn addressing(&mut self, a: Addr) -> &mut Self {
     self.addressing = Some(a);
     self
   }
 
+  /// Adds an entry to the target CPU set.
+  ///
+  /// Code will be generated for all CPUs in the target CPU set, and the correct
+  /// version to run will be autodetected at run time.
+  ///
+  /// By default, the target CPU set is empty, as it can be automaatically
+  /// determined by the selected `target`s.
+  ///
+  /// Default value: `[]`
   pub fn cpu(&mut self, c: Cpu) -> &mut Self {
     if self.cpu.is_none() { self.cpu = Some(vec![]); }
     self.cpu.as_mut().map(|cs| cs.push(c));
     self
   }
 
+  /// Specifies a `-D` variable with an optional value.
+  ///
+  /// Default value: `[]`
   pub fn define(&mut self, k: &str, v: Option<&str>) -> &mut Self {
     self.definitions.push((k.into(), v.map(|v| v.into())));
     self
   }
 
-  pub fn force_alignment(&mut self, force: bool) -> &mut Self {
-    self.force_aligned_memory = force;
-    self
-  }
-
+  /// Turns on or off generation of debug info.
+  ///
+  /// This will generally be automatically determined by the currently selected
+  /// cargo profile.
   pub fn debug(&mut self, val: bool) -> &mut Self {
     self.debug = Some(val);
     self
   }
 
+  /// Selects the math library to call out to.
+  ///
+  /// Default value: `Math::Default`
   pub fn math_lib(&mut self, m: Math) -> &mut Self {
     self.math_lib = m;
     self
   }
 
+  /// Adds a file to the set of files to be compiled together.
+  ///
+  /// Default value: `[]`
   pub fn file<P: AsRef<Path>>(&mut self, p: P) -> &mut Self {
     self.files.push(p.as_ref().to_path_buf());
     self
   }
 
+  /// Set the optimization level.
+  ///
+  /// Default value: inferred from current cargo profile
   pub fn opt_level(&mut self, level: u32) -> &mut Self {
     self.opt_level = Some(level);
     self
   }
 
+  /// Enables or disables asssertations in the code.
+  ///
+  /// Default value: `true`
   pub fn enable_assertations(&mut self, val: bool) -> &mut Self {
     self.assertations = val;
     self
   }
 
+  /// Enables or disables generation of fused multiply-add instructions.
+  ///
+  /// Default value: `true`
   pub fn enable_fma(&mut self, val: bool) -> &mut Self {
     self.fma = val;
     self
   }
 
+  /// Enables or disables loop unrolling.
+  ///
+  /// Default value: `true`
   pub fn enable_loop_unroll(&mut self, val: bool) -> &mut Self {
     self.loop_unroll = val;
     self
   }
 
+  /// Enables or disables faster masked vector loads on SSE. This may cause reads
+  /// to go off the end of arrays.
+  ///
+  /// Default value: `false`
   pub fn enable_fast_masked_vload(&mut self, val: bool) -> &mut Self {
     self.fast_masked_vload = val;
     self
   }
 
+  /// Enables or disables non-IEEE-754 compliant math operations.
+  ///
+  /// Enabling this option may cause code to go much faster, but have
+  /// unpredictable error in the result, and corner cases such as `inf` and `NaN`
+  /// may not be handled properly.
+  ///
+  /// Default value: `false`
   pub fn enable_fast_math(&mut self, val: bool) -> &mut Self {
     self.fast_math = val;
     self
   }
 
+  /// Enables or disables the generation of aligned vector load and store
+  /// instructions.
+  ///
+  /// Enabling this option may make code run faster, but it will result in
+  /// undefined behavior if buffers are not aligned correctly.
+  ///
+  /// Default value: `false`
   pub fn force_aligned_memory(&mut self, val: bool) -> &mut Self {
     self.force_aligned_memory = val;
     self
   }
 
+  /// Enables or disables the generation of position-independent code.
+  ///
+  /// This should generally be `true`, unless you have a really good reason
+  /// otherwise.
+  ///
+  /// Default value: `true` on x86_64, `false` on x86.
   pub fn pic(&mut self, val: bool) -> &mut Self {
     self.pic = Some(val);
     self
   }
 
+  /// Adds a target to generate code for.
+  ///
+  /// The first target that's added replaces the default list. Every subsequent
+  /// target will be added to this new list of targets. Only one target per
+  /// ISA may be selected. For example, you may have the simultaneous choises of
+  /// `[ Sse2_i32x4, Sse4_i32x8 ]`, but not `[ Sse2_i32x4, Sse2_i32x8 ]`.
+  ///
+  /// Default value: `[ Sse2, Sse4, Avx1, Avx1_1, Avx2 ]`
   pub fn target(&mut self, t: Target) -> &mut Self {
     if self.targets.is_none() { self.targets = Some(vec![]); }
     self.targets.as_mut().map(|ts| ts.push(t));
     self
   }
 
+  /// Force all warnings as errors.
+  ///
+  /// If enabled, warnings will break the build. If there are warnings, not being
+  /// treated as errors, cargo will currently silently eat them. Sorry.
+  ///
+  /// Bikeshed about it [here](https://github.com/rust-lang/cargo/issues/1106).
+  ///
+  /// Default value: `true`
   pub fn werror(&mut self, val: bool) -> &mut Self {
     self.werror = val;
     self
   }
 
+  /// Enables or disables warnings.
+  ///
+  /// Default value: `true`
   pub fn warn(&mut self, val: bool) -> &mut Self {
     self.warnings = val;
     self
   }
 
+  /// Enables or disables warnings about suboptimal code performance.
+  ///
+  /// These will not turn into errors *even with `.werror(true)`*, so cargo will
+  /// silently ignore them anyhow. This is really suboptimal. Sorry.
+  ///
+  /// Bikeshed about it [here](https://github.com/rust-lang/cargo/issues/1106).
+  ///
+  /// Default value: `true`
   pub fn warn_perf(&mut self, val: bool) -> &mut Self {
     self.wperf = val;
     self
@@ -452,6 +658,9 @@ impl Config {
     run(&mut t.to_command());
   }
 
+  /// Runs the compiler, generating the `output`.
+  ///
+  /// The name  `output` must begin with `lib` and end with `.a`.
   pub fn compile(&self, output: &str) {
     assert!(output.starts_with("lib"));
     assert!(output.ends_with(".a"));
@@ -490,6 +699,13 @@ impl Config {
   }
 }
 
+/// Compile a library from the given set of input `.ispc` files.
+///
+/// This will simply compile all files into object files and then assemble them
+/// into the output. This will read the standard environment variables to detect
+/// cross compilation and such.
+///
+/// This function will also print all metadata on standard output for Cargo.
 pub fn compile_library(output: &str, files: &[&str]) {
   let mut c = Config::new();
   for f in files { c.file(f); }
