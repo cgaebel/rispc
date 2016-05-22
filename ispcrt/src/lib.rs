@@ -4,4 +4,6 @@
 //!
 //! Currently, pthreads are used. In the future, I would like this library to
 //! support custom, pluggable task systems. Pull requests welcome.
+//!
+//! For more documentation, see the `ispc` crate.
 #![deny(missing_docs)]
