@@ -33,6 +33,7 @@ script:
   - pushd ispc-demo && cargo run   --release && popd
   - pushd ispc && cargo build && popd
   - pushd ispc && cargo test && popd
+  - pushd ispc && cargo doc && popd
 after_success:
 - |
   pushd ispc &&
