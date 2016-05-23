@@ -27,8 +27,8 @@ before_install:
 before_script:
   - export LIBCLANG_PATH=/usr/lib/llvm-${LLVM_VERSION}/lib
 script:
-  - pushd ispc-demo && cargo build --release && popd
-  - pushd ispc-demo && cargo run --release && popd
+  - pushd ispc-demo && cargo build --release || popd
+  - pushd ispc-demo && cargo run --release || popd
   - pushd ispc && cargo build && popd
   - pushd ispc && cargo test && popd
 after_success:
