@@ -25,6 +25,7 @@ before_script:
   - sudo apt-get install bison git
   - git clone https://github.com/ispc/ispc.git --depth 1 ispc-bin
   - pushd ispc-bin && make -j8 && popd
+  - export LIBCLANG_PATH=/usr/lib/llvm-${LLVM_VERSION}/lib
   - export PATH="$(pwd)/ispc-bin:$PATH"
 script:
   - echo "$PATH"
