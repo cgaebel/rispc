@@ -1,7 +1,7 @@
-extern crate ispc;
+extern crate rispc;
 
 fn main() {
-  ispc::Config::new()
+  rispc::Config::new()
     .file("src/mandel.ispc")
     .compile("libmandel.a");
 }

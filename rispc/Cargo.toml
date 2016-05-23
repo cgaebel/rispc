@@ -1,9 +1,9 @@
 [package]
-name = "ispc"
+name = "rispc"
 version = "0.1.0"
 authors = ["Clark Gaebel <cg.wowus.cg@gmail.com>"]
 license = "MIT"
-repository = "https://github.com/cgaebel/ispc-rs"
+repository = "https://github.com/cgaebel/rispc"
 description = """
 A build-time dependency for cargo build scripts to assist in invoking Intel's
 ISPC compiler to compile a static archive to be linked into rust code.

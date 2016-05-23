@@ -1,14 +1,14 @@
 [package]
-name = "ispc-demo"
+name = "rispc-demo"
 version = "0.1.0"
 authors = ["Clark Gaebel <cg.wowus.cg@gmail.com>"]
 build = "build.rs"
 
-[build-dependencies.ispc]
-path = "../ispc"
+[build-dependencies.rispc]
+path = "../rispc"
 
-[dependencies.ispcrt]
-path = "../ispcrt"
+[dependencies.rispcrt]
+path = "../rispcrt"
 
 [dependencies]
 time = "0.1"

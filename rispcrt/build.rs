@@ -5,5 +5,5 @@ fn main() {
     .cpp(true)
     .file("src/tasksys.cpp")
     .define("ISPC_USE_PTHREADS", None)
-    .compile("libispcrt.a");
+    .compile("librispcrt.a");
 }

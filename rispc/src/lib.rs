@@ -1,19 +1,14 @@
 //! A library for build scripts to compile [Intel SPMD (ispc)](http://ispc.github.io) code.
 //!
 //! This library is intended to be used as a `build-dependencies` entry in
-//! `Cargo.toml`:
+//! `Cargo.toml`, with a runtime component added to the `dependencies`:
 //!
 //! ```toml
 //! [build-dependencies]
-//! ispc = "0.1"
-//! ```
+//! rispc = "0.1"
 //!
-//! If one uses the ispc task system, they must link in the pthread-based
-//! runtime:
-//!
-//! ```toml
 //! [dependencies]
-//! ispcrt = "0.1"
+//! rispcrt = "0.1"
 //! ```
 //!
 //! The purpose of this crate is to provide the utility functions necesasry to
@@ -30,10 +25,10 @@
 //!
 //! ```no_run
 //! // build.rs
-//! extern crate ispc;
+//! extern crate rispc;
 //!
 //! fn main() {
-//!   ispc::compile_library("libmandelbrot.a", &[ "src/mandelbrot.ispc" ]);
+//!   rispc::compile_library("libmandelbrot.a", &[ "src/mandelbrot.ispc" ]);
 //! }
 //! ```
 //!
@@ -41,10 +36,10 @@
 //!
 //! ```no_run
 //! // build.rs
-//! extern crate ispc;
+//! extern crate rispc;
 //!
 //! fn main() {
-//!   ispc::Config::new()
+//!   rispc::Config::new()
 //!     .file("src/mandelbrot.ispc")
 //!     .define("FOO", Some("bar"))
 //!     .math_lib(ispc::Math::Fast)
@@ -116,7 +111,7 @@ pub enum Arch {
 }
 
 /// The CPU families one may generate code for. This will generally be
-/// autodetected based on the current set of ISPC targets, but may be manually
+/// autodetected based on the current set of ispc targets, but may be manually
 /// overridden.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Cpu {
@@ -326,9 +321,9 @@ impl Config {
     }
   }
 
-  /// Sets the addressing mode of the compiled ISPC code.
+  /// Sets the addressing mode of the compiled ispc code.
   ///
-  /// By default, all ISPC-generated code is addressed with `i32`s, so if your
+  /// By default, all ispc-generated code is addressed with `i32`s, so if your
   /// arrays have more than 2 billion elements, you'll need to change the
   /// addressing mode to `Addr::X86_64`.
   ///
