@@ -50,7 +50,6 @@
 //!     .math_lib(ispc::Math::Fast)
 //!     .enable_fast_math(true)
 //!     .addressing(ispc::Addr::A64)
-//!     .pic(false)
 //!     .compile("libmandelbrot.a");
 //! }
 //! ```
