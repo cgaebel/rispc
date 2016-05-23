@@ -678,18 +678,19 @@ impl Config {
     let mut headers = Vec::new();
 
     for file in self.files.iter() {
-      let lfile = file.file_stem().unwrap().to_string_lossy();
+//      let lfile = file.file_stem().unwrap().to_string_lossy();
       let obj: PathBuf = dst.join(file).with_extension("o");
       let hdr: PathBuf = dst.join(file).with_extension("h");
       let dep: PathBuf = dst.join(file).with_extension("dep");
       self.compile_object(file, &hdr, &dep, &obj, base.clone());
       let candidates : Vec<PathBuf> =
         vec![ obj.clone(),
-              obj.clone().with_file_name(format!("{}_sse2",  lfile)).with_extension("o"),
-              obj.clone().with_file_name(format!("{}_sse4",  lfile)).with_extension("o"),
-              obj.clone().with_file_name(format!("{}_avx",   lfile)).with_extension("o"),
-              obj.clone().with_file_name(format!("{}_avx11", lfile)).with_extension("o"),
-              obj.clone().with_file_name(format!("{}_avx2",  lfile)).with_extension("o") ];
+//              obj.clone().with_file_name(format!("{}_sse2",  lfile)).with_extension("o"),
+//              obj.clone().with_file_name(format!("{}_sse4",  lfile)).with_extension("o"),
+//              obj.clone().with_file_name(format!("{}_avx",   lfile)).with_extension("o"),
+//              obj.clone().with_file_name(format!("{}_avx11", lfile)).with_extension("o"),
+//              obj.clone().with_file_name(format!("{}_avx2",  lfile)).with_extension("o")
+        ];
 
       for c in candidates {
         if c.exists() {
