@@ -1,4 +1,4 @@
-# ispc-rs
+# rispc
 
 [![Build Status](https://travis-ci.org/cgaebel/rispc.svg?branch=master)](https://travis-ci.org/cgaebel/rispc)
 [![Build status](https://ci.appveyor.com/api/projects/status/xxxxTODO?svg=true)](https://ci.appveyor.com/project/cgaebel/rispc)
@@ -8,7 +8,7 @@
 
 [Intel SPMD Compiler Documentation](https://ispc.github.io/)
 
-## Using ispc-rs
+## Using rispc
 
 First, you'll want to both add a build script for your crate (`build.rs`) and
 also add `rispc` to your `build-dependencies`, and `rispsrt` to your `dependencies`:
