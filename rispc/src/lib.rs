@@ -48,6 +48,9 @@
 //!     .compile("libmandelbrot.a");
 //! }
 //! ```
+//!
+//! For a complete, working example, see the `rispc-demo` folder in the
+//! repository.
 #![allow(non_camel_case_types)]
 #![deny(missing_docs)]
 
