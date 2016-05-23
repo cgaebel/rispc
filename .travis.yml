@@ -24,7 +24,7 @@ env:
    - secure: AvI0TpLdhH1TZyxheKfLk3z5TYJhi+0WFOjCcwUYJf2tIQrgJWlEr+SIYISMjYnt/PpQ1CWK+VZMfd7yn2hDdowY3je+UuTo56N9+rHDVuH0RqvB44lp7d9KvwPN+S/vsW4De16B9ZATkRTz0ObuW62DEubfPB1a5ZraeKv7CxRqKNKVt7e9YpTBn8PlGcICdoMbxvYmGkTJ4MAPzCkR5Ic7kYk6TBh017ewSbxuu4902A44qqs6f0xcSDTU+9LToiV9tYkXLk0eBoLRotYayVI8XKLp5tsPi3GmtlR9x9/Tlx5KnbIiSBe8cpxsXMtEqO/9gb71y2Mahf98LtC/VdUzL85uBf8PP4vS3bNejiOizhEQrV8hhWUX3mrGMTt1jCfAq89/l4jvvRGMvUg7tDPiIEFYFyEUSiqvELEzrecAOY1JtwMvbQjn263xpZh2mNlzIg+bSisQgQxA9VtP3sUJ+OcTorhpk1nqURPiI4s55amBBFBtFPanjnlLQwrYK7AJBaZE8stA53TpXpopckNYM3e0kJ9rEYKI2LyXdMTDS6gcN7MQzbosUIZ48Bb632GEASpB3lVh6a6ktO1R3dTWmdEG7kOqp6gI6OJ1Wo5T9TxQ8q9D8psd6z23788o2NHiWGYWVlsiM6/XZ8AVoJFcxkS/2dAmTHXNiAIftoU=
 
 before_script:
-  - git clone --branch v1.8.2 https://github.com/ispc/ispc.git --depth 1 ispc-bin
+  - git clone --branch v1.9.0 https://github.com/ispc/ispc.git --depth 1 ispc-bin
   - pushd ispc-bin && make -j8 && popd
   - export LIBCLANG_PATH=/usr/lib/llvm-${LLVM_VERSION}/lib
   - export PATH="$(pwd)/ispc-bin:$PATH"
