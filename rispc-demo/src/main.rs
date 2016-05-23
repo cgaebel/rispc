@@ -1,5 +1,5 @@
 extern crate time;
-extern crate ispcrt;
+extern crate rispcrt;
 
 use std::cmp;
 use std::fs::File;
