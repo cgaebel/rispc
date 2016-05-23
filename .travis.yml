@@ -29,18 +29,16 @@ before_script:
 script:
   - echo "$PATH"
   - pwd
-  - pushd ispc-demo && cargo build --release && popd
-  - pushd ispc-demo && cargo run   --release && popd
-  - pushd ispc && cargo build && popd
-  - pushd ispc && cargo test && popd
-  - pushd ispc && cargo doc && popd
+  - pushd rispc-demo && cargo build --release && popd
+  - pushd rispc-demo && cargo run   --release && popd
+  - pushd rispc && cargo build && popd
+  - pushd rispc && cargo test && popd
+  - pushd rispc && cargo doc && popd
 after_success:
 - |
-  pushd ispc &&
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
-  echo '<meta http-equiv=refresh content=0;url=ispc/index.html>' > target/doc/index.html &&
+  echo '<meta http-equiv=refresh content=0;url=ispc/index.html>' > rispc/target/doc/index.html &&
   git clone --depth 1 https://github.com/davisp/ghp-import &&
-  ./ghp-import/ghp-import -n target/doc &&
-  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages &&
-  popd
+  ./ghp-import/ghp-import -n rispc/target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages

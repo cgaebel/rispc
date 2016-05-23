@@ -51,10 +51,12 @@
 #![allow(non_camel_case_types)]
 #![deny(missing_docs)]
 
+extern crate bindgen;
 extern crate gcc;
 
 use std::{cmp, fs, io};
 use std::ffi::OsString;
+use std::io::{Write, BufRead};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -642,12 +644,16 @@ impl Config {
     t
   }
 
-  fn compile_object(&self, file: &Path, dst: &Path, mut t: Tool) {
+  fn compile_object(&self, file: &Path, hdr: &Path, dep: &Path, dst: &Path, mut t: Tool) {
     fs::create_dir_all(&dst.parent().unwrap()).unwrap();
 
-    t.arg(&*file.to_string_lossy());
-    t.arg("-o");
-    t.arg(&*dst.to_string_lossy());
+    t.arg("-h")
+     .arg(&*hdr.to_string_lossy())
+     .arg("-MMM")
+     .arg(&*dep.to_string_lossy())
+     .arg(&*file.to_string_lossy())
+     .arg("-o")
+     .arg(&*dst.to_string_lossy());
 
     run(&mut t.to_command());
   }
@@ -659,17 +665,21 @@ impl Config {
     assert!(output.starts_with("lib"));
     assert!(output.ends_with(".a"));
 
+    let outbase = unsafe { output.slice_unchecked(3, output.len() - 2) };
+
     let dst = self.get_out_dir();
 
     let base = self.basic_tool();
 
     let mut objects = Vec::new();
+    let mut headers = Vec::new();
 
     for file in self.files.iter() {
       let lfile = file.file_stem().unwrap().to_string_lossy();
-      println!("cargo:rerun-if-changed={}", file.to_string_lossy());
       let obj: PathBuf = dst.join(file).with_extension("o");
-      self.compile_object(file, &obj, base.clone());
+      let hdr: PathBuf = dst.join(file).with_extension("h");
+      let dep: PathBuf = dst.join(file).with_extension("dep");
+      self.compile_object(file, &hdr, &dep, &obj, base.clone());
       let candidates : Vec<PathBuf> =
         vec![ obj.clone(),
               obj.clone().with_file_name(format!("{}_sse2",  lfile)).with_extension("o"),
@@ -679,17 +689,44 @@ impl Config {
               obj.clone().with_file_name(format!("{}_avx2",  lfile)).with_extension("o") ];
 
       for c in candidates {
-        let exists = c.exists();
-        println!("candidate {:?} exists={}", &c, exists);
-        if exists {
+        if c.exists() {
           objects.push(c);
         }
       }
+
+      headers.push(hdr);
+
+      let deps = io::BufReader::new(fs::File::open(dep).unwrap());
+
+      for d in deps.lines() { println!("cargo:rerun-if-changed={}", d.unwrap()); }
     }
 
     let mut c = gcc::Config::new();
     for o in &objects { c.object(&*o); }
     c.compile(output);
+
+    let superheader =
+      dst.join(outbase)
+         .with_extension("h");
+
+    {
+      let mut bindgen_f = fs::File::create(superheader.clone()).unwrap();
+      for h in headers {
+        write!(bindgen_f, "#include \"{}\"\n", h.display()).unwrap();
+      }
+    }
+
+    let bindgen_dst = dst.join(outbase).with_extension("rs");
+
+    bindgen::builder()
+      .emit_builtins()
+      .forbid_unknown_types()
+      .header(superheader.to_str().unwrap())
+      .link_static(outbase)
+      .generate()
+      .unwrap()
+      .write_to_file(bindgen_dst)
+      .unwrap();
   }
 }
 

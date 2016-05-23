@@ -11,4 +11,5 @@ ISPC compiler to compile a static archive to be linked into rust code.
 keywords = ["build-dependencies", "ispc", "spmd", "intel"]
 
 [dependencies]
+bindgen = "0.16.0"
 gcc = "0.3"

@@ -1,18 +1,11 @@
 extern crate time;
-extern crate rispcrt;
+#[macro_use] extern crate rispcrt;
 
 use std::cmp;
 use std::fs::File;
 use std::io::Write;
 
-extern {
-  fn mandelbrot_ispc(
-    x0: f32, y0: f32,
-    x1: f32, y1: f32,
-    w: u32, h: u32,
-    max_iters: u32,
-    output: *mut u32);
-}
+ispc_module!(mandel);
 
 fn mandel(c_re: f32, c_im: f32, count: u32) -> u32 {
   let mut z_re = c_re;
@@ -87,7 +80,7 @@ fn main() {
 
   for _ in 0..3 {
     let t0 = t_ns();
-    unsafe { mandelbrot_ispc(x0, y0, x1, y1, w, h, max_iters, bp) };
+    unsafe { mandel::mandelbrot_ispc(x0, y0, x1, y1, w, h, max_iters, bp) };
     let dt = t_ns() - t0;
     min_ispc = cmp::min(min_ispc, dt);
   }
