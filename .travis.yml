@@ -29,8 +29,8 @@ before_script:
 script:
   - pushd ispc-demo && cargo build --release || popd
   - pushd ispc-demo && cargo run --release || popd
-  - pushd ispc && cargo build && popd
-  - pushd ispc && cargo test && popd
+  - pushd ispc && cargo build || popd
+  - pushd ispc && cargo test || popd
 after_success:
 - |
   pushd ispc &&
