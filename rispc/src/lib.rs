@@ -42,9 +42,9 @@
 //!   rispc::Config::new()
 //!     .file("src/mandelbrot.ispc")
 //!     .define("FOO", Some("bar"))
-//!     .math_lib(ispc::Math::Fast)
+//!     .math_lib(rispc::Math::Fast)
 //!     .enable_fast_math(true)
-//!     .addressing(ispc::Addr::A64)
+//!     .addressing(rispc::Addr::A64)
 //!     .compile("libmandelbrot.a");
 //! }
 //! ```
