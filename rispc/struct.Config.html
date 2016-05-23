@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Config` struct in crate `rispc`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Config">
+
+    <title>rispc::Config - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>rispc</a></p><script>window.sidebarCurrent = {name: 'Config', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>rispc</a>::<wbr><a class='struct' href=''>Config</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-313' class='srclink' href='../src/rispc/src/lib.rs.html#277-298' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Config {
+    // some fields omitted
+}</pre><div class='docblock'><p>Extra configuration to pass to <code>ispc</code>.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-494' class='srclink' href='../src/rispc/src/lib.rs.html#300-735' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></h4>
+<div class='docblock'><p>Constructs a new instance of a blank set of configuration.</p>
+
+<p>The builder is finished with the <code>compile</code> function.</p>
+</div><h4 id='method.addressing' class='method'><code>fn <a href='#method.addressing' class='fnname'>addressing</a>(&amp;mut self, a: <a class='enum' href='../rispc/enum.Addr.html' title='rispc::Addr'>Addr</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Sets the addressing mode of the compiled ispc code.</p>
+
+<p>By default, all ispc-generated code is addressed with <code>i32</code>s, so if your
+arrays have more than 2 billion elements, you&#39;ll need to change the
+addressing mode to <code>Addr::X86_64</code>.</p>
+
+<p>Default value: <code>Addr::X86</code></p>
+</div><h4 id='method.cpu' class='method'><code>fn <a href='#method.cpu' class='fnname'>cpu</a>(&amp;mut self, c: <a class='enum' href='../rispc/enum.Cpu.html' title='rispc::Cpu'>Cpu</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Adds an entry to the target CPU set.</p>
+
+<p>Code will be generated for all CPUs in the target CPU set, and the correct
+version to run will be autodetected at run time.</p>
+
+<p>By default, the target CPU set is empty, as it can be automaatically
+determined by the selected <code>target</code>s.</p>
+
+<p>Default value: <code>[]</code></p>
+</div><h4 id='method.define' class='method'><code>fn <a href='#method.define' class='fnname'>define</a>(&amp;mut self, k: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, v: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Specifies a <code>-D</code> variable with an optional value.</p>
+
+<p>Default value: <code>[]</code></p>
+</div><h4 id='method.debug' class='method'><code>fn <a href='#method.debug' class='fnname'>debug</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Turns on or off generation of debug info.</p>
+
+<p>This will generally be automatically determined by the currently selected
+cargo profile.</p>
+</div><h4 id='method.math_lib' class='method'><code>fn <a href='#method.math_lib' class='fnname'>math_lib</a>(&amp;mut self, m: <a class='enum' href='../rispc/enum.Math.html' title='rispc::Math'>Math</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Selects the math library to call out to.</p>
+
+<p>Default value: <code>Math::Default</code></p>
+</div><h4 id='method.file' class='method'><code>fn <a href='#method.file' class='fnname'>file</a>&lt;P: <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/path/struct.Path.html' title='std::path::Path'>Path</a>&gt;&gt;(&amp;mut self, p: P) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Adds a file to the set of files to be compiled together.</p>
+
+<p>Default value: <code>[]</code></p>
+</div><h4 id='method.opt_level' class='method'><code>fn <a href='#method.opt_level' class='fnname'>opt_level</a>(&amp;mut self, level: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Set the optimization level.</p>
+
+<p>Default value: inferred from current cargo profile</p>
+</div><h4 id='method.enable_assertations' class='method'><code>fn <a href='#method.enable_assertations' class='fnname'>enable_assertations</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables asssertations in the code.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.enable_fma' class='method'><code>fn <a href='#method.enable_fma' class='fnname'>enable_fma</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables generation of fused multiply-add instructions.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.enable_loop_unroll' class='method'><code>fn <a href='#method.enable_loop_unroll' class='fnname'>enable_loop_unroll</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables loop unrolling.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.enable_fast_masked_vload' class='method'><code>fn <a href='#method.enable_fast_masked_vload' class='fnname'>enable_fast_masked_vload</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables faster masked vector loads on SSE. This may cause reads
+to go off the end of arrays.</p>
+
+<p>Default value: <code>false</code></p>
+</div><h4 id='method.enable_fast_math' class='method'><code>fn <a href='#method.enable_fast_math' class='fnname'>enable_fast_math</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables non-IEEE-754 compliant math operations.</p>
+
+<p>Enabling this option may cause code to go much faster, but have
+unpredictable error in the result, and corner cases such as <code>inf</code> and <code>NaN</code>
+may not be handled properly.</p>
+
+<p>Default value: <code>false</code></p>
+</div><h4 id='method.force_aligned_memory' class='method'><code>fn <a href='#method.force_aligned_memory' class='fnname'>force_aligned_memory</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables the generation of aligned vector load and store
+instructions.</p>
+
+<p>Enabling this option may make code run faster, but it will result in
+undefined behavior if buffers are not aligned correctly.</p>
+
+<p>Default value: <code>false</code></p>
+</div><h4 id='method.pic' class='method'><code>fn <a href='#method.pic' class='fnname'>pic</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables the generation of position-independent code.</p>
+
+<p>This should generally be <code>true</code>, unless you have a really good reason
+otherwise.</p>
+
+<p>Default value: <code>true</code> on x86_64, <code>false</code> on x86.</p>
+</div><h4 id='method.target' class='method'><code>fn <a href='#method.target' class='fnname'>target</a>(&amp;mut self, t: <a class='enum' href='../rispc/enum.Target.html' title='rispc::Target'>Target</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Adds a target to generate code for.</p>
+
+<p>The first target that&#39;s added replaces the default list. Every subsequent
+target will be added to this new list of targets. Only one target per
+ISA may be selected. For example, you may have the simultaneous choises of
+<code>[ Sse2_i32x4, Sse4_i32x8 ]</code>, but not <code>[ Sse2_i32x4, Sse2_i32x8 ]</code>.</p>
+
+<p>Default value: <code>[ Sse2, Sse4, Avx1, Avx1_1, Avx2 ]</code></p>
+</div><h4 id='method.werror' class='method'><code>fn <a href='#method.werror' class='fnname'>werror</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Force all warnings as errors.</p>
+
+<p>If enabled, warnings will break the build. If there are warnings, not being
+treated as errors, cargo will currently silently eat them. Sorry.</p>
+
+<p>Bikeshed about it <a href="https://github.com/rust-lang/cargo/issues/1106">here</a>.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.warn' class='method'><code>fn <a href='#method.warn' class='fnname'>warn</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables warnings.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.warn_perf' class='method'><code>fn <a href='#method.warn_perf' class='fnname'>warn_perf</a>(&amp;mut self, val: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut Self</code></h4>
+<div class='docblock'><p>Enables or disables warnings about suboptimal code performance.</p>
+
+<p>These will not turn into errors <em>even with <code>.werror(true)</code></em>, so cargo will
+silently ignore them anyhow. This is really suboptimal. Sorry.</p>
+
+<p>Bikeshed about it <a href="https://github.com/rust-lang/cargo/issues/1106">here</a>.</p>
+
+<p>Default value: <code>true</code></p>
+</div><h4 id='method.compile' class='method'><code>fn <a href='#method.compile' class='fnname'>compile</a>(&amp;self, output: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)</code></h4>
+<div class='docblock'><p>Runs the compiler, generating the <code>output</code>.</p>
+
+<p>The name  <code>output</code> must begin with <code>lib</code> and end with <code>.a</code>.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-334' class='srclink' href='../src/rispc/src/lib.rs.html#276' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a> for <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-359' class='srclink' href='../src/rispc/src/lib.rs.html#276' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.hash' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html#tymethod.hash' class='fnname'>hash</a>&lt;__H: <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a>&gt;(&amp;self, __arg_0: &amp;mut __H)</code></h4>
+<div class='docblock'><p>Feeds this value into the state given, updating the hasher as necessary.</p>
+</div><h4 id='method.hash_slice' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html#method.hash_slice' class='fnname'>hash_slice</a>&lt;H&gt;(data: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[Self]</a>, state: &amp;mut H) <span class='where'>where H: <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a></span></code><div class='since' title='Stable since Rust version 1.3.0'>1.3.0</div></h4>
+<div class='docblock'><p>Feeds a slice of this type into the state provided.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-384' class='srclink' href='../src/rispc/src/lib.rs.html#276' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-407' class='srclink' href='../src/rispc/src/lib.rs.html#276' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../rispc/struct.Config.html' title='rispc::Config'>Config</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "rispc";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

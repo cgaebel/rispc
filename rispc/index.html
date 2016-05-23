@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `rispc` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, rispc">
+
+    <title>rispc - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'rispc', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>rispc</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-0' class='srclink' href='../src/rispc/src/lib.rs.html#1-787' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>A library for build scripts to compile <a href="http://ispc.github.io">Intel SPMD (ispc)</a> code.</p>
+
+<p>This library is intended to be used as a <code>build-dependencies</code> entry in
+<code>Cargo.toml</code>, with a runtime component added to the <code>dependencies</code>:</p>
+
+<pre><code class="language-toml">[build-dependencies]
+rispc = &quot;0.1&quot;
+
+[dependencies]
+rispcrt = &quot;0.1&quot;
+</code></pre>
+
+<p>The purpose of this crate is to provide the utility functions necesasry to
+compile ispc code into a static archive which is then linked into a Rust
+crate. The top-level <code>compile_library</code> function serves as a convenience and
+more advanced configuration is available through the <code>Config</code> builder.</p>
+
+<p>This crate will automatically detect situations such as cross compilation
+or other environment variables set by Cargo and will build code appropriately.</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<p>Use the default configuration:</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='comment'>// build.rs</span>
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rispc</span>;
+
+<span class='kw'>fn</span> <span class='ident'>main</span>() {
+  <span class='ident'>rispc</span>::<span class='ident'>compile_library</span>(<span class='string'>&quot;libmandelbrot.a&quot;</span>, <span class='kw-2'>&amp;</span>[ <span class='string'>&quot;src/mandelbrot.ispc&quot;</span> ]);
+}</pre>
+
+<p>Use more advanced configuration:</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='comment'>// build.rs</span>
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rispc</span>;
+
+<span class='kw'>fn</span> <span class='ident'>main</span>() {
+  <span class='ident'>rispc</span>::<span class='ident'>Config</span>::<span class='ident'>new</span>()
+    .<span class='ident'>file</span>(<span class='string'>&quot;src/mandelbrot.ispc&quot;</span>)
+    .<span class='ident'>define</span>(<span class='string'>&quot;FOO&quot;</span>, <span class='prelude-val'>Some</span>(<span class='string'>&quot;bar&quot;</span>))
+    .<span class='ident'>math_lib</span>(<span class='ident'>rispc</span>::<span class='ident'>Math</span>::<span class='ident'>Fast</span>)
+    .<span class='ident'>enable_fast_math</span>(<span class='boolvalue'>true</span>)
+    .<span class='ident'>addressing</span>(<span class='ident'>rispc</span>::<span class='ident'>Addr</span>::<span class='ident'>A64</span>)
+    .<span class='ident'>compile</span>(<span class='string'>&quot;libmandelbrot.a&quot;</span>);
+}</pre>
+
+<p>For a complete, working example, see the <code>rispc-demo</code> folder in the
+repository.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Config.html'
+                                  title='rispc::Config'>Config</a></td>
+                           <td class='docblock short'>
+                                <p>Extra configuration to pass to <code>ispc</code>.</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Addr.html'
+                                  title='rispc::Addr'>Addr</a></td>
+                           <td class='docblock short'>
+                                <p>An addressing scheme. By default, <code>ispc</code> uses 32-bit addressing. If your
+Arrays grow to more than <code>2^32</code> elements, this will need to be changed to
+64-bit.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Arch.html'
+                                  title='rispc::Arch'>Arch</a></td>
+                           <td class='docblock short'>
+                                <p>The architecture to target. This will generally be autodetected from Cargo&#39;s
+current target, but may be changed manually to either x86 or x86_64 systems.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Cpu.html'
+                                  title='rispc::Cpu'>Cpu</a></td>
+                           <td class='docblock short'>
+                                <p>The CPU families one may generate code for. This will generally be
+autodetected based on the current set of ispc targets, but may be manually
+overridden.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Math.html'
+                                  title='rispc::Math'>Math</a></td>
+                           <td class='docblock short'>
+                                <p>Selects which math libraries to call out to.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Target.html'
+                                  title='rispc::Target'>Target</a></td>
+                           <td class='docblock short'>
+                                <p>Selects which target ISA(s) and the lane width(s) to generate code for.</p>
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.compile_library.html'
+                                  title='rispc::compile_library'>compile_library</a></td>
+                           <td class='docblock short'>
+                                <p>Compile a library from the given set of input <code>.ispc</code> files.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "rispc";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
